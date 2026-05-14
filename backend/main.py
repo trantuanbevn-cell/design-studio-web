@@ -13,10 +13,6 @@ from dotenv import load_dotenv
 # Load env
 load_dotenv()
 
-# Add current dir to path
-import sys
-sys.path.insert(0, os.path.dirname(__file__))
-
 # Import routes
 from api.routes import router
 from database import init_db
@@ -44,9 +40,12 @@ init_db()
 app.include_router(router)
 
 # Serve static files (frontend)
+# __file__ = /app/backend/main.py, so parent.parent = /app
 frontend_path = Path(__file__).parent.parent / "frontend"
 if frontend_path.exists():
     app.mount("/static", StaticFiles(directory=str(frontend_path)), name="static")
+else:
+    print(f"Warning: Frontend path not found: {frontend_path}")
 
 # Root endpoint
 @app.get("/")
