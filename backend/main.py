@@ -13,6 +13,10 @@ from dotenv import load_dotenv
 # Load env
 load_dotenv()
 
+# Add current dir to path
+import sys
+sys.path.insert(0, os.path.dirname(__file__))
+
 # Import routes
 from api.routes import router
 from database import init_db
