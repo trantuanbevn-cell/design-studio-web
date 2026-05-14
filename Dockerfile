@@ -2,7 +2,12 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copy files - structure: /app/backend/, /app/frontend/
+# Copy files correctly - maintain folder structure
+# /app/backend/  <- backend code
+# /app/frontend/ <- frontend files
+# /app/uploads/  <- for uploaded files
+# /app/renders/  <- for rendered images
+
 COPY backend/requirements.txt ./backend/
 COPY backend/ ./backend/
 COPY frontend/ ./frontend/
@@ -21,5 +26,5 @@ ENV PYTHONUNBUFFERED=1
 ENV HOST=0.0.0.0
 ENV PORT=8080
 
-# Run - uvicorn will find backend.main:app from /app dir
+# Run - uvicorn finds backend.main:app from /app directory
 CMD ["python", "-m", "uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8080"]
