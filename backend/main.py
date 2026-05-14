@@ -11,15 +11,17 @@ import os
 import sys
 from dotenv import load_dotenv
 
-# Fix Python path - when running from /app as main module
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 # Load env
 load_dotenv()
 
-# Import routes - absolute imports
-from backend.api.routes import router
-from backend.database import init_db
+# Import routes - PYTHONPATH=/app in Docker makes these work
+try:
+    from backend.api.routes import router
+    from backend.database import init_db
+except ImportError:
+    # Fallback for local dev
+    from api.routes import router
+    from database import init_db
 
 # Create app
 app = FastAPI(
