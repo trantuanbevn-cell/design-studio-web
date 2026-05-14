@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Studio - AI Render</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            color: #333;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .file-btn {
+            display: block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+        
+        .file-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        #filename {
+            display: block;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            text-align: center;
+            min-height: 20px;
+            color: #666;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .option-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+        
+        select, textarea {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95em;
+            font-family: inherit;
+            background: white;
+        }
+        
+        select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            grid-column: 1 / -1;
+        }
+        
+        .render-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .render-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+        
+        .render-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        
+        .result.active {
+            display: block;
+        }
+        
+        .result img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .error {
+            display: none;
+            padding: 15px;
+            background: #fee;
+            color: #c33;
+            border-radius: 6px;
+            border-left: 4px solid #c33;
+        }
+        
+        .error.active {
+            display: block;
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Design Studio</h1>
+            <p class="subtitle">AI Render from 3D Models</p>
+        </header>
+        
+        <form id="renderForm">
+            <!-- File Upload -->
+            <div class="section">
+                <div class="section-title">1. Upload File (DAE, GLB, OBJ)</div>
+                <div class="file-input-wrapper">
+                    <label for="fileInput" class="file-btn">📁 Choose File</label>
+                    <input type="file" id="fileInput" accept=".dae,.glb,.obj">
+                </div>
+                <div id="filename">No file selected</div>
+            </div>
+            
+            <!-- Render Options -->
+            <div class="section">
+                <div class="section-title">2. Rendering Options</div>
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label for="lighting">☀️ Lighting</label>
+                        <select id="lighting">
+                            <option value="interior_daylight">Interior Daylight</option>
+                            <option value="interior_evening">Interior Evening</option>
+                            <option value="interior_night">Interior Night</option>
+                            <option value="exterior_daylight">Exterior Daylight</option>
+                            <option value="exterior_golden">Golden Hour</option>
+                            <option value="studio_professional">Studio Professional</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="style">🎨 Style</label>
+                        <select id="style">
+                            <option value="Photorealistic">Photorealistic</option>
+                            <option value="Architectural">Architectural</option>
+                            <option value="Modern">Modern</option>
+                            <option value="Minimalist">Minimalist</option>
+                            <option value="Luxury">Luxury</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="resolution">📐 Resolution</label>
+                        <select id="resolution">
+                            <option value="1K">1K (Low)</option>
+                            <option value="2K" selected>2K (Standard)</option>
+                            <option value="4K">4K (High)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label for="description">💬 Description</label>
+                        <input type="text" id="description" placeholder="Optional: add any special notes...">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Render Button -->
+            <button type="submit" class="render-btn" id="renderBtn">
+                🎬 RENDER IMAGE
+            </button>
+        </form>
+        
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Generating your render... Please wait (30-60 seconds)</p>
+        </div>
+        
+        <!-- Error -->
+        <div class="error" id="error"></div>
+        
+        <!-- Result -->
+        <div class="result" id="result">
+            <h3>✅ Render Complete!</h3>
+            <img id="resultImage" src="" alt="Render">
+            <a href="#" id="downloadBtn" download>📥 Download Image</a>
+        </div>
+    </div>
+    
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const filenameDisplay = document.getElementById('filename');
+        const renderForm = document.getElementById('renderForm');
+        const renderBtn = document.getElementById('renderBtn');
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const result = document.getElementById('result');
+        const resultImage = document.getElementById('resultImage');
+        const downloadBtn = document.getElementById('downloadBtn');
+        
+        // File input handler
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                filenameDisplay.textContent = `✓ ${file.name}`;
+            }
+        });
+        
+        // Form submit
+        renderForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!fileInput.files[0]) {
+                showError('Please select a file first!');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('lighting', document.getElementById('lighting').value);
+            formData.append('style', document.getElementById('style').value);
+            formData.append('resolution', document.getElementById('resolution').value);
+            formData.append('description', document.getElementById('description').value);
+            
+            renderBtn.disabled = true;
+            loading.classList.add('active');
+            error.classList.remove('active');
+            result.classList.remove('active');
+            
+            try {
+                // Step 1: Upload file
+                const uploadRes = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: new FormData(new FormData().append('file', fileInput.files[0]))
+                });
+                
+                if (!uploadRes.ok) {
+                    throw new Error('Upload failed');
+                }
+                
+                const uploadData = await uploadRes.json();
+                
+                // Step 2: Render
+                const renderFormData = new FormData();
+                renderFormData.append('filename', uploadData.filename);
+                renderFormData.append('lighting', document.getElementById('lighting').value);
+                renderFormData.append('style', document.getElementById('style').value);
+                renderFormData.append('resolution', document.getElementById('resolution').value);
+                renderFormData.append('description', document.getElementById('description').value);
+                
+                const renderRes = await fetch('/api/render', {
+                    method: 'POST',
+                    body: renderFormData
+                });
+                
+                if (!renderRes.ok) {
+                    throw new Error('Render failed');
+                }
+                
+                // Display result
+                const blob = await renderRes.blob();
+                const url = URL.createObjectURL(blob);
+                resultImage.src = url;
+                downloadBtn.href = url;
+                downloadBtn.download = 'render.png';
+                
+                result.classList.add('active');
+                
+            } catch (err) {
+                showError(err.message);
+            } finally {
+                renderBtn.disabled = false;
+                loading.classList.remove('active');
+            }
+        });
+        
+        function showError(msg) {
+            error.textContent = `❌ ${msg}`;
+            error.classList.add('active');
+        }
+    </script>
+</body>
+</html>

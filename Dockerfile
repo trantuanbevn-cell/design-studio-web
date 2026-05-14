@@ -1,0 +1,25 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Copy files
+COPY backend/requirements.txt .
+COPY backend/ ./backend/
+COPY frontend/ ./frontend/
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Create directories
+RUN mkdir -p uploads renders
+
+# Expose port
+EXPOSE 8000
+
+# Set env
+ENV PYTHONUNBUFFERED=1
+ENV HOST=0.0.0.0
+ENV PORT=8000
+
+# Run
+CMD ["python", "-m", "uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
