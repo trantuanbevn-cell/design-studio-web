@@ -1,21 +1,25 @@
 """
 Design Studio - Web App Backend
 FastAPI + Imagen API for 3D rendering
-Complete production-ready version
+Production-ready version with proper imports
 """
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 import os
+import sys
 from dotenv import load_dotenv
+
+# Fix Python path - when running from /app as main module
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Load env
 load_dotenv()
 
-# Import routes (relative imports)
-from .api.routes import router
-from .database import init_db
+# Import routes - absolute imports
+from backend.api.routes import router
+from backend.database import init_db
 
 # Create app
 app = FastAPI(
@@ -34,18 +38,27 @@ app.add_middleware(
 )
 
 # Init database
-init_db()
+try:
+    init_db()
+    print("✓ Database initialized")
+except Exception as e:
+    print(f"❌ Database error: {e}")
 
 # Include routes
-app.include_router(router)
+try:
+    app.include_router(router)
+    print("✓ API routes loaded")
+except Exception as e:
+    print(f"❌ Routes error: {e}")
 
 # Serve static files (frontend)
-# __file__ = /app/backend/main.py, so parent.parent = /app
+# __file__ = /app/backend/main.py, parent.parent = /app
 frontend_path = Path(__file__).parent.parent / "frontend"
 if frontend_path.exists():
     app.mount("/static", StaticFiles(directory=str(frontend_path)), name="static")
+    print(f"✓ Frontend mounted at /static")
 else:
-    print(f"Warning: Frontend path not found: {frontend_path}")
+    print(f"❌ Frontend path not found: {frontend_path}")
 
 # Root endpoint
 @app.get("/")
@@ -67,16 +80,11 @@ async def startup_event():
     print("=" * 50)
     print("🎨 Design Studio Web API")
     print("=" * 50)
-    print("✓ Database initialized")
-    print("✓ API routes loaded")
     print("✓ Imagen API configured")
     print("✓ Ready for requests")
     print("=" * 50)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(
-        app,
-        host=os.getenv("HOST", "0.0.0.0"),
-        port=int(os.getenv("PORT", 8080))
-    )
+    port = int(os.getenv("PORT", 8080))
+    uvicorn.run(app, host="0.0.0.0", port=port)

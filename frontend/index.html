@@ -1,410 +1,720 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Design Studio - AI Render</title>
+    <title>Design Studio Pro - AI 3D Rendering</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0e27;
+            color: #fff;
             min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1a1f3a 0%, #16213e 100%);
+            padding: 20px 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .status {
+            font-size: 12px;
+            color: #00d4ff;
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
+            gap: 8px;
         }
-        
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #00d4ff;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main Container */
         .container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 800px;
-            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
             padding: 40px;
+            max-width: 1600px;
+            margin: 0 auto;
         }
-        
-        header {
-            text-align: center;
-            margin-bottom: 40px;
+
+        /* Left Panel - Upload & Options */
+        .panel {
+            background: linear-gradient(135deg, #1a1f3a 0%, #0f1419 100%);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
-        
-        h1 {
-            color: #333;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        
-        .subtitle {
-            color: #666;
-            font-size: 1.1em;
-        }
-        
-        .section {
-            margin-bottom: 30px;
-        }
-        
-        .section-title {
-            color: #333;
-            font-size: 1.3em;
-            margin-bottom: 15px;
+
+        .panel h2 {
+            font-size: 18px;
+            margin-bottom: 24px;
+            color: #00d4ff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             font-weight: 600;
         }
-        
-        .file-input-wrapper {
-            position: relative;
-            display: inline-block;
-            width: 100%;
+
+        /* File Upload */
+        .upload-area {
+            border: 2px dashed rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 24px;
         }
-        
-        input[type="file"] {
+
+        .upload-area:hover {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .upload-area input[type="file"] {
             display: none;
         }
-        
-        .file-btn {
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .upload-file {
             display: block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 8px;
+            margin-top: 16px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            color: #000;
+            border: none;
+            border-radius: 6px;
             cursor: pointer;
-            text-align: center;
-            font-size: 1.1em;
             font-weight: 600;
             transition: transform 0.2s;
-            width: 100%;
         }
-        
-        .file-btn:hover {
+
+        .upload-file:hover {
             transform: translateY(-2px);
         }
-        
+
         #filename {
-            display: block;
-            margin-top: 10px;
-            padding: 10px;
-            background: #f0f0f0;
-            border-radius: 6px;
-            text-align: center;
-            min-height: 20px;
-            color: #666;
+            color: #00d4ff;
+            font-size: 13px;
+            margin-top: 12px;
+            word-break: break-all;
         }
-        
+
+        /* Options Grid */
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 16px;
+            margin-bottom: 24px;
         }
-        
+
         .option-group {
             display: flex;
             flex-direction: column;
         }
-        
-        label {
-            color: #333;
-            font-weight: 500;
+
+        .option-group label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #00d4ff;
             margin-bottom: 8px;
-            font-size: 0.95em;
+            font-weight: 600;
         }
-        
-        select, textarea {
-            padding: 10px;
-            border: 2px solid #ddd;
+
+        select, input[type="text"], textarea {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
             border-radius: 6px;
-            font-size: 0.95em;
+            color: #fff;
+            padding: 10px 12px;
+            font-size: 13px;
             font-family: inherit;
-            background: white;
+            transition: all 0.2s;
         }
-        
-        select:focus, textarea:focus {
+
+        select:focus, input[type="text"]:focus, textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+            border-color: #00d4ff;
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.2);
+            background: rgba(0, 212, 255, 0.05);
         }
-        
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-            grid-column: 1 / -1;
+
+        select option {
+            background: #1a1f3a;
         }
-        
+
+        /* Camera Selector */
+        .camera-loader {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .camera-loader label {
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .camera-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            max-height: 150px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .camera-item {
+            padding: 8px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .camera-item:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+
+        /* Region Editor */
+        .region-editor {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .region-tools {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .tool-btn {
+            flex: 1;
+            padding: 8px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 4px;
+            color: #00d4ff;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .tool-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+
+        .tool-btn.active {
+            background: #00d4ff;
+            color: #000;
+        }
+
+        /* Render Button */
         .render-btn {
             width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 30px;
+            padding: 16px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            color: #000;
             border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: 600;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
         }
-        
+
         .render-btn:hover:not(:disabled) {
             transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
         }
-        
+
         .render-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
-        
+
+        /* Right Panel - Preview */
+        .preview-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .preview-box {
+            background: linear-gradient(135deg, #1a1f3a 0%, #0f1419 100%);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .preview-content {
+            text-align: center;
+            color: #666;
+        }
+
+        .preview-content.has-image {
+            background: #000;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-box img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Loading */
         .loading {
             display: none;
             text-align: center;
-            color: #666;
-            margin-top: 20px;
+            color: #00d4ff;
         }
-        
+
         .loading.active {
             display: block;
         }
-        
+
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 212, 255, 0.2);
+            border-top: 3px solid #00d4ff;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
+            margin: 0 auto 16px;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
-        .result {
-            display: none;
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 8px;
+
+        /* Controls */
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
-        
-        .result.active {
-            display: block;
+
+        .btn {
+            padding: 12px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            background: rgba(0, 212, 255, 0.05);
+            color: #00d4ff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.2s;
         }
-        
-        .result img {
-            max-width: 100%;
-            border-radius: 8px;
-            margin: 20px 0;
+
+        .btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
         }
-        
+
+        .btn.primary {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            color: #000;
+            border: none;
+        }
+
+        .btn.primary:hover {
+            box-shadow: 0 4px 16px rgba(0, 212, 255, 0.3);
+        }
+
+        /* Error */
         .error {
             display: none;
-            padding: 15px;
-            background: #fee;
-            color: #c33;
+            padding: 16px;
+            background: rgba(255, 67, 67, 0.1);
+            border: 1px solid rgba(255, 67, 67, 0.3);
             border-radius: 6px;
-            border-left: 4px solid #c33;
+            color: #ff4343;
+            font-size: 13px;
+            margin-bottom: 16px;
         }
-        
+
         .error.active {
             display: block;
         }
-        
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.8em;
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 1fr;
             }
-            
+
             .options-grid {
                 grid-template-columns: 1fr;
             }
-            
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 16px 20px;
+            }
+
             .container {
                 padding: 20px;
+                gap: 20px;
+            }
+
+            .panel {
+                padding: 20px;
+            }
+
+            .upload-area {
+                padding: 24px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🎨 Design Studio</h1>
-            <p class="subtitle">AI Render from 3D Models</p>
-        </header>
-        
-        <form id="renderForm">
-            <!-- File Upload -->
-            <div class="section">
-                <div class="section-title">1. Upload File (DAE, GLB, OBJ)</div>
-                <div class="file-input-wrapper">
-                    <label for="fileInput" class="file-btn">📁 Choose File</label>
-                    <input type="file" id="fileInput" accept=".dae,.glb,.obj">
-                </div>
-                <div id="filename">No file selected</div>
-            </div>
-            
-            <!-- Render Options -->
-            <div class="section">
-                <div class="section-title">2. Rendering Options</div>
-                <div class="options-grid">
-                    <div class="option-group">
-                        <label for="lighting">☀️ Lighting</label>
-                        <select id="lighting">
-                            <option value="interior_daylight">Interior Daylight</option>
-                            <option value="interior_evening">Interior Evening</option>
-                            <option value="interior_night">Interior Night</option>
-                            <option value="exterior_daylight">Exterior Daylight</option>
-                            <option value="exterior_golden">Golden Hour</option>
-                            <option value="studio_professional">Studio Professional</option>
-                        </select>
-                    </div>
-                    
-                    <div class="option-group">
-                        <label for="style">🎨 Style</label>
-                        <select id="style">
-                            <option value="Photorealistic">Photorealistic</option>
-                            <option value="Architectural">Architectural</option>
-                            <option value="Modern">Modern</option>
-                            <option value="Minimalist">Minimalist</option>
-                            <option value="Luxury">Luxury</option>
-                        </select>
-                    </div>
-                    
-                    <div class="option-group">
-                        <label for="resolution">📐 Resolution</label>
-                        <select id="resolution">
-                            <option value="1K">1K (Low)</option>
-                            <option value="2K" selected>2K (Standard)</option>
-                            <option value="4K">4K (High)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="option-group">
-                        <label for="description">💬 Description</label>
-                        <input type="text" id="description" placeholder="Optional: add any special notes...">
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Render Button -->
-            <button type="submit" class="render-btn" id="renderBtn">
-                🎬 RENDER IMAGE
-            </button>
-        </form>
-        
-        <!-- Loading -->
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Generating your render... Please wait (30-60 seconds)</p>
+    <header>
+        <div class="logo">🎨 Design Studio Pro</div>
+        <div class="status">
+            <span class="status-dot"></span>
+            <span>API Ready</span>
         </div>
-        
-        <!-- Error -->
-        <div class="error" id="error"></div>
-        
-        <!-- Result -->
-        <div class="result" id="result">
-            <h3>✅ Render Complete!</h3>
-            <img id="resultImage" src="" alt="Render">
-            <a href="#" id="downloadBtn" download>📥 Download Image</a>
+    </header>
+
+    <div class="container">
+        <!-- Left Panel -->
+        <div class="panel">
+            <h2>Upload & Configure</h2>
+
+            <div class="error" id="error"></div>
+
+            <!-- Upload Area -->
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Drag & drop or click to upload</div>
+                <div class="upload-text" style="font-size: 12px; color: #666;">Supports DAE, GLB, OBJ</div>
+                <button class="upload-file" type="button">Choose File</button>
+            </div>
+            <input type="file" id="fileInput" accept=".dae,.glb,.obj" style="display:none;">
+            <div id="filename" style="display:none;"></div>
+
+            <!-- Camera Loader -->
+            <div class="camera-loader">
+                <label>📷 Select Camera</label>
+                <div class="camera-list" id="cameraList">
+                    <div class="camera-item">No file loaded</div>
+                </div>
+            </div>
+
+            <!-- Region Editor -->
+            <div class="region-editor">
+                <label>🎨 Region Editor</label>
+                <div class="region-tools">
+                    <button class="tool-btn" id="drawBtn">✏️ Draw Region</button>
+                    <button class="tool-btn" id="clearBtn">🗑️ Clear</button>
+                </div>
+                <canvas id="regionCanvas" style="display:none; width:100%; height:200px; background:#000; border-radius:4px; cursor:crosshair;"></canvas>
+                <div style="font-size:12px; color:#888; margin-top:8px;">Select areas to enhance (optional)</div>
+            </div>
+
+            <!-- Options Grid -->
+            <div class="options-grid">
+                <div class="option-group">
+                    <label>☀️ Lighting</label>
+                    <select id="lighting">
+                        <option value="natural">Natural Light</option>
+                        <option value="studio">Studio Light</option>
+                        <option value="ambient">Ambient</option>
+                        <option value="sunset">Golden Hour</option>
+                        <option value="neon">Neon</option>
+                        <option value="dramatic">Dramatic</option>
+                    </select>
+                </div>
+
+                <div class="option-group">
+                    <label>🎨 Style</label>
+                    <select id="style">
+                        <option value="Photorealistic">Photorealistic</option>
+                        <option value="Modern">Modern</option>
+                        <option value="Minimalist">Minimalist</option>
+                        <option value="Cinematic">Cinematic</option>
+                        <option value="Artistic">Artistic</option>
+                    </select>
+                </div>
+
+                <div class="option-group">
+                    <label>📐 Resolution</label>
+                    <select id="resolution">
+                        <option value="1K">1K (1024×1024)</option>
+                        <option value="2K" selected>2K (2048×2048)</option>
+                        <option value="4K">4K (4096×4096)</option>
+                    </select>
+                </div>
+
+                <div class="option-group">
+                    <label>✨ Quality</label>
+                    <select id="quality">
+                        <option value="fast">Fast</option>
+                        <option value="balanced" selected>Balanced</option>
+                        <option value="best">Best</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="option-group" style="margin-bottom:24px;">
+                <label>💬 Custom Description (Optional)</label>
+                <textarea id="description" placeholder="E.g. 'Modern minimalist interior with natural light'" style="height:80px; resize:none;"></textarea>
+            </div>
+
+            <!-- Render Button -->
+            <button class="render-btn" id="renderBtn">🚀 RENDER IMAGE</button>
+        </div>
+
+        <!-- Right Panel - Preview -->
+        <div class="preview-panel">
+            <div class="preview-box">
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <div>Generating... (30-60s)</div>
+                </div>
+                <div class="preview-content" id="preview">
+                    <div>Preview will appear here</div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button class="btn primary" id="downloadBtn" style="display:none;">⬇️ Download</button>
+                <button class="btn" id="newRenderBtn" style="display:none;">🔄 New Render</button>
+                <button class="btn" id="shareBtn" style="display:none;">📤 Share</button>
+                <button class="btn" id="historyBtn">📜 History</button>
+            </div>
         </div>
     </div>
-    
+
     <script>
         const fileInput = document.getElementById('fileInput');
-        const filenameDisplay = document.getElementById('filename');
-        const renderForm = document.getElementById('renderForm');
+        const filename = document.getElementById('filename');
         const renderBtn = document.getElementById('renderBtn');
         const loading = document.getElementById('loading');
+        const preview = document.getElementById('preview');
         const error = document.getElementById('error');
-        const result = document.getElementById('result');
-        const resultImage = document.getElementById('resultImage');
         const downloadBtn = document.getElementById('downloadBtn');
-        
-        // File input handler
+
+        let selectedFile = null;
+        let regionCanvas = null;
+        let isDrawing = false;
+
+        // File upload
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
-                filenameDisplay.textContent = `✓ ${file.name}`;
+                selectedFile = file;
+                filename.textContent = `✓ ${file.name}`;
+                filename.style.display = 'block';
+                loadCameras();
             }
         });
-        
-        // Form submit
-        renderForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (!fileInput.files[0]) {
-                showError('Please select a file first!');
+
+        // Load cameras (mock)
+        function loadCameras() {
+            const list = document.getElementById('cameraList');
+            list.innerHTML = `
+                <div class="camera-item">Camera 1</div>
+                <div class="camera-item">Camera 2</div>
+                <div class="camera-item">Camera 3</div>
+                <div class="camera-item">Default</div>
+            `;
+        }
+
+        // Region editor
+        const drawBtn = document.getElementById('drawBtn');
+        const clearBtn = document.getElementById('clearBtn');
+
+        drawBtn.addEventListener('click', () => {
+            const canvas = document.getElementById('regionCanvas');
+            if (canvas.style.display === 'none') {
+                canvas.style.display = 'block';
+                drawBtn.classList.add('active');
+                setupCanvas();
+            } else {
+                canvas.style.display = 'none';
+                drawBtn.classList.remove('active');
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            const canvas = document.getElementById('regionCanvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        });
+
+        function setupCanvas() {
+            const canvas = document.getElementById('regionCanvas');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 200;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'rgba(0, 212, 255, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            canvas.addEventListener('mousedown', () => { isDrawing = true; });
+            canvas.addEventListener('mouseup', () => { isDrawing = false; });
+            canvas.addEventListener('mousemove', (e) => {
+                if (!isDrawing) return;
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                ctx.fillStyle = 'rgba(0, 212, 255, 0.3)';
+                ctx.fillRect(x - 5, y - 5, 10, 10);
+            });
+        }
+
+        // Render
+        renderBtn.addEventListener('click', async () => {
+            if (!selectedFile) {
+                error.textContent = '❌ Please select a file first';
+                error.classList.add('active');
                 return;
             }
-            
+
             const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
+            formData.append('file', selectedFile);
             formData.append('lighting', document.getElementById('lighting').value);
             formData.append('style', document.getElementById('style').value);
             formData.append('resolution', document.getElementById('resolution').value);
             formData.append('description', document.getElementById('description').value);
-            
+
             renderBtn.disabled = true;
             loading.classList.add('active');
             error.classList.remove('active');
-            result.classList.remove('active');
-            
+            preview.innerHTML = '';
+            downloadBtn.style.display = 'none';
+
             try {
-                // Step 1: Upload file
-                const uploadRes = await fetch('/api/upload', {
-                    method: 'POST',
-                    body: new FormData(new FormData().append('file', fileInput.files[0]))
-                });
-                
-                if (!uploadRes.ok) {
-                    throw new Error('Upload failed');
-                }
+                const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData });
+                if (!uploadRes.ok) throw new Error('Upload failed');
                 
                 const uploadData = await uploadRes.json();
-                
-                // Step 2: Render
+
                 const renderFormData = new FormData();
                 renderFormData.append('filename', uploadData.filename);
                 renderFormData.append('lighting', document.getElementById('lighting').value);
                 renderFormData.append('style', document.getElementById('style').value);
                 renderFormData.append('resolution', document.getElementById('resolution').value);
                 renderFormData.append('description', document.getElementById('description').value);
-                
-                const renderRes = await fetch('/api/render', {
-                    method: 'POST',
-                    body: renderFormData
-                });
-                
-                if (!renderRes.ok) {
-                    throw new Error('Render failed');
-                }
-                
-                // Display result
+
+                const renderRes = await fetch('/api/render', { method: 'POST', body: renderFormData });
+                if (!renderRes.ok) throw new Error('Render failed');
+
                 const blob = await renderRes.blob();
                 const url = URL.createObjectURL(blob);
-                resultImage.src = url;
+                preview.innerHTML = `<img src="${url}" alt="Render">`;
+                preview.classList.add('has-image');
+
                 downloadBtn.href = url;
-                downloadBtn.download = 'render.png';
-                
-                result.classList.add('active');
-                
+                downloadBtn.download = `render-${Date.now()}.png`;
+                downloadBtn.style.display = 'block';
+                document.getElementById('newRenderBtn').style.display = 'block';
+                document.getElementById('shareBtn').style.display = 'block';
             } catch (err) {
-                showError(err.message);
+                error.textContent = `❌ ${err.message}`;
+                error.classList.add('active');
             } finally {
                 renderBtn.disabled = false;
                 loading.classList.remove('active');
             }
         });
-        
-        function showError(msg) {
-            error.textContent = `❌ ${msg}`;
-            error.classList.add('active');
-        }
+
+        // Download
+        document.getElementById('downloadBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (this.href) {
+                const a = document.createElement('a');
+                a.href = this.href;
+                a.download = this.download;
+                a.click();
+            }
+        });
+
+        // New render
+        document.getElementById('newRenderBtn').addEventListener('click', () => {
+            location.reload();
+        });
+
+        // Share
+        document.getElementById('shareBtn').addEventListener('click', () => {
+            alert('Share feature coming soon!');
+        });
     </script>
 </body>
 </html>

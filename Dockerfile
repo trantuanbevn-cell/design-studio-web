@@ -8,6 +8,7 @@ WORKDIR /app
 # /app/uploads/  <- for uploaded files
 # /app/renders/  <- for rendered images
 
+COPY main.py .
 COPY backend/requirements.txt ./backend/
 COPY backend/ ./backend/
 COPY frontend/ ./frontend/
@@ -26,5 +27,5 @@ ENV PYTHONUNBUFFERED=1
 ENV HOST=0.0.0.0
 ENV PORT=8080
 
-# Run - uvicorn finds backend.main:app from /app directory
-CMD ["python", "-m", "uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Run - uvicorn finds main:app from /app directory
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

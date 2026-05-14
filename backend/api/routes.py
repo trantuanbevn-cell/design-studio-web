@@ -11,9 +11,18 @@ import os
 from datetime import datetime
 import json
 
-from ..database import SessionLocal, User, Project, Render
-from ..core.dae_parser import DAEParser
-from ..core.imagen_renderer import ImagenRenderer
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
+try:
+    from backend.database import SessionLocal, User, Project, Render
+    from backend.core.dae_parser import DAEParser
+    from backend.core.imagen_renderer import ImagenRenderer
+except ImportError:
+    from database import SessionLocal, User, Project, Render
+    from core.dae_parser import DAEParser
+    from core.imagen_renderer import ImagenRenderer
 
 router = APIRouter(prefix="/api", tags=["render"])
 
