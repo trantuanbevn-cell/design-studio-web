@@ -11,9 +11,9 @@ import os
 from datetime import datetime
 import json
 
-from database import SessionLocal, User, Project, Render
-from core.dae_parser import DAEParser
-from core.imagen_renderer import ImagenRenderer
+from ..database import SessionLocal, User, Project, Render
+from ..core.dae_parser import DAEParser
+from ..core.imagen_renderer import ImagenRenderer
 
 router = APIRouter(prefix="/api", tags=["render"])
 

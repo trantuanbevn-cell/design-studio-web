@@ -13,9 +13,9 @@ from dotenv import load_dotenv
 # Load env
 load_dotenv()
 
-# Import routes
-from api.routes import router
-from database import init_db
+# Import routes (relative imports)
+from .api.routes import router
+from .database import init_db
 
 # Create app
 app = FastAPI(
